@@ -12,8 +12,8 @@ UID          := $(shell id -u)
 .PHONY: deploy undeploy reload venv install-files install-venv
 
 deploy: undeploy install-files install-venv
-	@"$(VENV_PYTHON)" -c "import brother_ql" || \
-		(echo "Missing brother_ql in installed venv. Run: make venv" >&2; exit 1)
+	@"$(VENV_PYTHON)" -c "import brother_ql, fitz" || \
+		(echo "Missing Python dependencies in installed venv. Run: make venv" >&2; exit 1)
 	sed 's|__INSTALL_DIR__|$(INSTALL_DIR)|g' "$(PLIST_SRC)" > "$(PLIST_DST)"
 	launchctl bootstrap gui/$(UID) "$(PLIST_DST)"
 	@echo "Deployed. Test with: launchctl list | grep ql800"

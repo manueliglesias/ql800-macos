@@ -8,9 +8,9 @@ echo "=== $(date) === worker fired"
 INSTALL_DIR="$(cd "$(dirname "$0")" && pwd)"
 QUEUE_DIR="/tmp/ql800_pending"
 FAILED_DIR="$QUEUE_DIR/failed"
-LOCK_DIR="$QUEUE_DIR/.worker.lock"
+LOCK_DIR="/tmp/dev.iglesias.ql800.worker.lock"
 
-mkdir -p "$QUEUE_DIR" "$FAILED_DIR"
+mkdir -p "$QUEUE_DIR"
 
 if ! mkdir "$LOCK_DIR" 2>/dev/null; then
     echo "Another worker is already running"
@@ -28,6 +28,7 @@ while IFS= read -r f; do
     if [ "$status" -eq 0 ]; then
         rm -f "$f"
     else
+        mkdir -p "$FAILED_DIR"
         failed="$FAILED_DIR/$(basename "$f").failed_$(date +%Y%m%d%H%M%S)"
         echo "Moving failed job to: $failed"
         mv "$f" "$failed"
